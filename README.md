@@ -11,7 +11,7 @@ npm install ArilyChan/ppysb-query-ripple
 
 ### 使用
 ```javascript
-const ppysbQuery = require("./index");
+const ppysbQuery = require("ppysb-query-ripple");
 let psq = new ppysbQuery({
     admin: [123456], // 管理员列表，必要
     database: "./Opsbot-Ripple-v1.db", // 数据库路径，默认为根目录下的Opsbot-Ripple-v1.db
