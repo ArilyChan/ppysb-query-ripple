@@ -52,7 +52,7 @@ class getBestScoresData {
                 output = output + scoreObject.beatmap.toScoreTitle(scoreObject.mode);
                 output = output + scoreObject.toString() + "\n";
             });
-            if (over15Count > 0) output = output + "为防止文字过长，已省略剩余的 "+ over15Count + " 个bp";
+            if (over15Count > 0) output = output + "为防止文字过长，已省略剩余的 " + over15Count + " 个bp";
             return output;
         }
         catch (ex) {
@@ -145,23 +145,62 @@ class getBestScoresData {
             // bp列表
             let output = simpleUserObject.username + " 的成绩统计：\n";
             let scoreObjects = await this.getAllBestScoresObject(simpleUserObject);
-            let ranks = [];
-            let counts = [];
+            let rank_list = ["SSH", "SS", "SH", "S", "A", "B", "C", "D"];
+            let rank_count = [0, 0, 0, 0, 0, 0, 0, 0];
             let length = scoreObjects.length;
+            output = output + "获取到 " + length + " 个成绩\n";
+            let maxpp = 0;
+            let minpp = 0;
+            let perfectcount = 0;
+            let summary_mods = []; // {mod, count, maxpp}
             for (let i = 0; i < length; i++) {
+                // 记录rank
                 let rank = scoreObjects[i].rank;
-                let rankIndex = ranks.indexOf(rank);
-                if (rankIndex<0) {
-                    ranks.push(rank);
-                    counts.push(1);
+                let rankIndex = rank_list.indexOf(rank);
+                if (rankIndex < 0) { // 应该没有除rank_list之外的rank吧，这个只是以防万一
+                    rank_list.push(rank);
+                    rank_count.push(1);
                 }
                 else {
-                    counts[rankIndex] = counts[rankIndex]+1;
+                    rank_count[rankIndex] = rank_count[rankIndex] + 1;
                 }
+                // 记录pp最大值和最小值，一般是按pp降序排列的，这个只是以防万一
+                let pp = scoreObjects[i].pp;
+                if (pp > maxpp) maxpp = pp;
+                if (minpp === 0) minpp = pp;
+                else if (pp < minpp) minpp = pp;
+                // 记录mods，每种mod分开记录次数和最大pp
+                let mods = utils.getScoreModsStringArray(scoreObjects[i].mods);
+                mods.map((mod) => {
+                    let summary_mods_Index = summary_mods.findIndex((value) => value.mod === mod);
+                    if (summary_mods_Index < 0) {
+                        let newmod = {
+                            mod: mod,
+                            count: 1,
+                            maxpp: pp
+                        };
+                        summary_mods.push(newmod);
+                    }
+                    else {
+                        summary_mods[summary_mods_Index].count += 1;
+                        if (pp > summary_mods[summary_mods_Index].maxpp) summary_mods[summary_mods_Index].maxpp = pp;
+                    }
+                });
+                if (scoreObjects[i].full_combo) perfectcount += 1;
             }
-            for (let i = 0; i < ranks.length; i++) {
-                output = output + counts[i] + " 个 "+ ranks[i] + "\n";
+            for (let i = 0; i < rank_list.length; i++) {
+                if (rank_count[i] > 0) output = output + rank_count[i] + " 个 " + rank_list[i] + "\n";
             }
+            output = output + "mod统计：\n";
+            summary_mods.sort((a, b) => b.count - a.count);
+            for (let i = 0; i < summary_mods.length; i++) {
+                output = output + summary_mods[i].count + " 个 " + summary_mods[i].mod + " ， 最高pp：" + summary_mods[i].maxpp.toFixed(0) + "\n";
+            }
+            output = output + "bp最高pp：" + maxpp.toFixed(0) + "\n";
+            output = output + "bp最低pp：" + minpp.toFixed(0) + "\n";
+            const aboveSCount = rank_count[0] + rank_count[1] + rank_count[2] + rank_count[3];
+            const sbCount = aboveSCount - perfectcount;
+            if (sbCount > 0) output = output + "其中有 " + sbCount + " 个S评级的成绩不是full combo";
             return output;
         }
         catch (ex) {

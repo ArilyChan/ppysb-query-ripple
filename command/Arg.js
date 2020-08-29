@@ -32,7 +32,7 @@ class Arg {
     constructor(args) {
         this.beatmapId = -1;
         this.beatmapSearchInfo = {};
-        if (args.beatmapStringWithUser){
+        if (args.beatmapStringWithUser) {
             this.beatmapSearchString = args.beatmapStringWithUser;
             this.getBeatmapInfo(args.beatmapStringWithUser);
         }
@@ -107,7 +107,7 @@ class Arg {
         if (typeof userString !== "string") return users;
         users = userString.split("/").filter(d => d).map(d => d.trim());
         // 防止请求过多，人数控制在10人以内
-        if (users.length>10) users = users.slice(0, 10);
+        if (users.length > 10) users = users.slice(0, 10);
         return users;
     }
 
@@ -239,6 +239,21 @@ class Arg {
         if (this.beatmapId > 0) return this;
         if (Object.keys(this.beatmapSearchInfo).length <= 0) return this;
         let id = await OsusearchApi.search(this.beatmapSearchInfo);
+        if (typeof id === "number") {
+            this.beatmapId = id;
+        }
+        else {
+            if (id.code === 404) throw "找不到谱面：" + JSON.stringify(this.beatmapSearchInfo);
+            else throw "从osusearch获取谱面id失败";
+        }
+        return this;
+    }
+
+    // 为了偷懒，这里的beatmapId其实是beatmapSetId，使用时一定要注意
+    async getBeatmapSetId() {
+        if (this.beatmapId > 0) return this;
+        if (Object.keys(this.beatmapSearchInfo).length <= 0) return this;
+        let id = await OsusearchApi.search(this.beatmapSearchInfo, "set");
         if (typeof id === "number") {
             this.beatmapId = id;
         }
