@@ -1,10 +1,11 @@
 {
   "name": "ppysb-query-ripple",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "main": "index.js",
   "dependencies": {
     "glob": "^7.1.6",
-    "nedb": "^1.8.0"
+    "nedb": "^1.8.0",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {},
   "scripts": {
