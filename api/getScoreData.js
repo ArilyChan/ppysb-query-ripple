@@ -8,7 +8,8 @@ const utils = require("./utils");
 // 用ripple获取玩家成绩
 // api暂不能获取rx模式成绩！！
 class getScoreData {
-    constructor(host, apiObjects, isRX, isTop, isVsTop, isTops) {
+    constructor(exscore, host, apiObjects, isRX, isTop, isVsTop, isTops) {
+        this.exscore = exscore;
         this.host = host;
         this.apiObjects = apiObjects;
         this.isRX = isRX;
@@ -78,7 +79,7 @@ class getScoreData {
             let scoreObjects = await this.getScoreObjects(argObject, beatmapObject);
             let output = "";
             output = output + beatmapObject.toScoreTitle(scoreObjects[0].mode);
-            output = output + scoreObjects[0].toCompleteString();
+            output = output + await scoreObjects[0].toCompleteString(this.exscore);
             return output;
         }
         catch (ex) {
@@ -96,7 +97,7 @@ class getScoreData {
             if (scoreObjects.length <= 0) return "这个谱面还没有人上传过成绩";
             let output = "";
             output = output + beatmapObject.toScoreTitle(scoreObjects[0].mode);
-            if (scoreObjects.length === 1) output = output + scoreObjects[0].toCompleteString();
+            if (scoreObjects.length === 1) output = output + await scoreObjects[0].toCompleteString(this.exscore);
             else {
                 scoreObjects.map((scoreObject) => {
                     output = output + scoreObject.toString() + "\n";
@@ -124,7 +125,7 @@ class getScoreData {
             if (searchResult.length <= 0) return "没找到指定玩家的成绩";
             let output = "";
             output = output + beatmapObject.toScoreTitle(scoreObjects[0].mode);
-            if (searchResult.length === 1) output = output + searchResult[0].toCompleteString();
+            if (searchResult.length === 1) output = output + await searchResult[0].toCompleteString(this.exscore);
             else {
                 searchResult.map((scoreObject) => {
                     output = output + scoreObject.toString() + "\n";

@@ -20,13 +20,13 @@ module.exports = {
     },
     /**
      * @param {import("../command/Arg")} arg
-     * @param {{admin, host, nedb, commandsInfo}} globalConstant
+     * @param {{admin, host, nedb, commandsInfo, exscore}} globalConstant
      */
     call: async (arg, globalConstant) => {
         try {
             let arg2 = await arg.getBeatmapId();
             let apiObjects = arg2.getOsuApiObject();
-            return await new getScoreData(globalConstant.host, apiObjects, false, false, true, false).output();
+            return await new getScoreData(globalConstant.exscore, globalConstant.host, apiObjects, false, false, true, false).output();
         }
         catch (ex) {
             return ex;

@@ -20,7 +20,7 @@ module.exports = {
     },
     /**
      * @param {import("../command/Arg")} arg
-     * @param {{admin, host, nedb, commandsInfo}} globalConstant
+     * @param {{admin, host, nedb, commandsInfo, exscore}} globalConstant
      * @param {Number} qqId 发送者Id
      */
     call: async (arg, globalConstant, qqId) => {

@@ -20,10 +20,10 @@ module.exports = {
     },
     /**
      * @param {import("../command/Arg")} arg
-     * @param {{admin, host, nedb, commandsInfo}} globalConstant
+     * @param {{admin, host, nedb, commandsInfo, exscore}} globalConstant
      */
     call: async (arg, globalConstant) => {
         let apiObjects = arg.getOsuApiObject();
-        return await new getRecentScoresData(globalConstant.host, apiObjects, false, false).output();
+        return await new getRecentScoresData(globalConstant.exscore, globalConstant.host, apiObjects, false, false).output();
     }
 };

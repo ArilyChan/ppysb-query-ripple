@@ -6,7 +6,8 @@ let psq = new ppysbQuery({
     admin: [2,3],
     database: "./database.db",
     prefix: "?",
-    prefix2: "？"
+    prefix2: "？",
+    exscore: true
 })
 
 

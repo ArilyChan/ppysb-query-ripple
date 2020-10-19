@@ -3,6 +3,7 @@
 const utils = require('../utils');
 const BeatmapObject = require('./BeatmapObject');
 const SimpleUserObject = require("./SimpleUserObject");
+const MapCalculater = require("./MapCalculater");
 
 class ScoreObject {
     // ripple api的/recent和/best有beatmap没有user，/score有user没有beatmap
@@ -48,7 +49,14 @@ class ScoreObject {
         return name + comboString + accString + utils.format_number(this.score) + " \t " + this.rank + " \t | " + modsString + " \t " + ppString;
     }
 
-    toCompleteString() {
+    async toCompleteString(exScore = false) {
+        try {
+            if (exScore) await this.extendScore();
+        }
+        catch (ex) {
+            console.log(ex);
+            this.errorMessage = "获取谱面文件失败，部分数据无法显示，请重试\n";
+        }
         const name = "玩家：" + this.user.username + "\n";
         const comboString = (this.mode !== 0) ? "combo: " + this.maxcombo + "\n" : "combo: " + this.maxcombo + "/" + this.beatmap.maxCombo + "\n";
         const accString = "ACC：" + this.acc.toFixed(2) + "%\n";
@@ -86,9 +94,34 @@ class ScoreObject {
         }
         const playDate = "日期：" + this.getPlayedDate().toLocaleDateString();
 
+        if (this.mode === 0 && exScore) {
+            if (this.errorMessage) {
+                return this.errorMessage + name + comboString + accString + modsString + rankString + ppString + scoreString + counts.join("|") + "\n" + playDate;
+            }
+            const trueStars = "计算星数：" + this.stars + "★\n";
+            const truePrams = "计算四维：" + this.beatmapParams + "\n";
+            const calPP = "插件计算：\n" + this.ppString + "\n" + this.fcppString + "\n" + this.ssppString + "\n由于服务器的pp计算公式不同，pp计算结果可能会有出入\n";
+            return trueStars + truePrams + name + comboString + accString + modsString + rankString + ppString + scoreString + counts.join("|") + "\n" + calPP + playDate;
+        }
         return name + comboString + accString + modsString + rankString + ppString + scoreString + counts.join("|") + "\n" + playDate;
     }
 
+    async extendScore() {
+        if (this.mode === 0) {
+            let mapCalculater = await new MapCalculater(this.beatmap.beatmapId, { mods: this.mods, combo: this.maxcombo, nmiss: this.countmiss, acc: this.acc }).init(this.mode);
+            const map = mapCalculater.map;
+            const ar = map.ar;
+            const od = map.od;
+            const hp = map.hp;
+            const cs = map.cs;
+            const resultStat = mapCalculater.calculateStatWithMods({ ar, od, hp, cs }, this.mods);
+            this.beatmapParams = "CS" + resultStat.cs.toFixed(1) + "  AR" + resultStat.ar.toFixed(1) + "  OD" + resultStat.od.toFixed(1) + "  HP" + resultStat.hp.toFixed(1);
+            this.stars = mapCalculater.stars.total.toFixed(2);
+            this.ppString = "pp: " + mapCalculater.pp.total.toFixed(2) + "pp (aim: " + mapCalculater.pp.aim.toFixed(0) + "  spd: " + mapCalculater.pp.speed.toFixed(0) + "  acc: " + mapCalculater.pp.acc.toFixed(0) + ")";
+            this.fcppString = "If FC: " + mapCalculater.fcpp.total.toFixed(2) + "pp (aim: " + mapCalculater.fcpp.aim.toFixed(0) + "  spd: " + mapCalculater.fcpp.speed.toFixed(0) + "  acc: " + mapCalculater.fcpp.acc.toFixed(0) + ")";
+            this.ssppString = "If SS: " + mapCalculater.sspp.total.toFixed(2) + "pp (aim: " + mapCalculater.sspp.aim.toFixed(0) + "  spd: " + mapCalculater.sspp.speed.toFixed(0) + "  acc: " + mapCalculater.sspp.acc.toFixed(0) + ")";
+        }
+    }
 }
 
 module.exports = ScoreObject;

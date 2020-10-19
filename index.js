@@ -12,6 +12,7 @@ class ppysbQuery {
      * @param {Array<String>} [params.prefixs] 指令前缀，必须为单个字符，默认为[*]
      * @param {String} [params.prefix] 兼容旧版，指令前缀，必须为单个字符，默认为*
      * @param {String} [params.prefix2] 兼容旧版，备用指令前缀，必须为单个字符，默认为*
+     * @param {Boolean} [params.exscore] 设为true时获取谱面文件以计算更多数据，但是会拖慢响应时间，默认为false
      */
     constructor(params) {
         this.globalConstant = {};
@@ -28,6 +29,7 @@ class ppysbQuery {
             this.prefixs = params.prefixs || ["*"];
         }
         this.globalConstant.commandsInfo = new CommandsInfo(this.prefixs);
+        this.globalConstant.exscore = params.exscore || false;
 	}
 
 	

@@ -20,7 +20,8 @@ let psq = new ppysbQuery({
     prefixs: ["*"], // 指令前缀，必须为单个字符，默认为["*"]
     // 以下只是为了兼容旧版，不再使用
     prefix: "*", // 指令前缀，必须为单个字符，默认为*
-    prefix2: "*" // 备用指令前缀，必须为单个字符，默认为*
+    prefix2: "*", // 备用指令前缀，必须为单个字符，默认为*
+    exscore: false // 设为true时获取谱面文件以计算更多数据，但是会拖慢响应时间，默认为false
 })
 
 let reply = await psq.apply(

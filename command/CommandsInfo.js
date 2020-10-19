@@ -31,7 +31,7 @@ class CommandsInfo {
                 let module = require(path.resolve(file));
                 if (module !== undefined && module.enabled) {
                     commands.push(module);
-                    console.log("加载指令：" + module.type);
+                    console.log("[ppysb]加载指令：" + module.type);
                 }
             } catch (e) {
                 console.log('unable to load module due to require error', path.resolve(file));

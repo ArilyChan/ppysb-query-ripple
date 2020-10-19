@@ -6,7 +6,8 @@ const getUserData = require("./getUserData");
 const utils = require("./utils");
 
 class getRecentScoresData {
-    constructor(host, apiObjects, isRX, isPassed) {
+    constructor(exscore, host, apiObjects, isRX, isPassed) {
+        this.exscore = exscore;
         this.host = host;
         this.apiObject = (Array.isArray(apiObjects)) ? apiObjects[0] : apiObjects; // 只允许查一个人
         this.isRX = isRX;
@@ -43,7 +44,7 @@ class getRecentScoresData {
                 for (var i = 0; i < scoreObjects.length; i++) {
                     if (scoreObjects[i].completed > 0) {
                         output = output + scoreObjects[i].beatmap.toScoreTitle(scoreObjects[i].mode);
-                        output = output + scoreObjects[i].toCompleteString();
+                        output = output + await scoreObjects[i].toCompleteString(this.exscore);
                         return output;
                     }
                 }
@@ -53,7 +54,7 @@ class getRecentScoresData {
                 let scoreObject = scoreObjects.pop();
                 let output = "";
                 output = output + scoreObject.beatmap.toScoreTitle(scoreObject.mode);
-                output = output + scoreObject.toCompleteString();
+                output = output + await scoreObject.toCompleteString(this.exscore);
                 return output;
             }
         }

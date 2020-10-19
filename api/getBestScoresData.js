@@ -6,7 +6,8 @@ const getUserData = require("./getUserData");
 const utils = require("./utils");
 
 class getBestScoresData {
-    constructor(host, apiObjects, isRX, searchText = "") {
+    constructor(exscore, host, apiObjects, isRX, searchText = "") {
+        this.exscore = exscore;
         this.host = host;
         this.apiObject = (Array.isArray(apiObjects)) ? apiObjects[0] : apiObjects; // 只允许查一个人
         this.isRX = isRX;
@@ -71,7 +72,7 @@ class getBestScoresData {
                 let scoreObject = scoreObjects[0];
                 let output = "";
                 output = output + scoreObject.beatmap.toScoreTitle(scoreObject.mode);
-                output = output + scoreObject.toCompleteString();
+                output = output + await scoreObject.toCompleteString(this.exscore);
                 return output;
             }
             else {
@@ -113,7 +114,7 @@ class getBestScoresData {
             for (let i = 0; i < length; i++) {
                 if (beatmapId === scoreObjects[i].beatmap.beatmapId) {
                     output = output + scoreObjects[i].beatmap.toScoreTitle(scoreObjects[i].mode);
-                    output = output + scoreObjects[i].toCompleteString();
+                    output = output + await scoreObjects[i].toCompleteString(this.exscore);
                     output = output + "\n该谱面是您的bp " + (i + 1).toString();
                     return output;
                 }
@@ -123,7 +124,7 @@ class getBestScoresData {
                 for (let i = 0; i < length; i++) {
                     if (scoreObjects[i].beatmap.songName.toLowerCase().indexOf(this.searchText.toLowerCase()) >= 0) {
                         output = output + scoreObjects[i].beatmap.toScoreTitle(scoreObjects[i].mode);
-                        output = output + scoreObjects[i].toCompleteString();
+                        output = output + await scoreObjects[i].toCompleteString(this.exscore);
                         output = output + "\n该谱面是您的bp " + (i + 1).toString();
                         return output;
                     }

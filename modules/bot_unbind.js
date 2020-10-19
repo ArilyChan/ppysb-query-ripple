@@ -20,7 +20,7 @@ module.exports = {
     },
     /**
      * @param {import("../command/Arg")} arg
-     * @param {{admin, host, nedb, commandsInfo}} globalConstant
+     * @param {{admin, host, nedb, commandsInfo, exscore}} globalConstant
      */
     call: async (arg, globalConstant) => {
         let qqId = parseInt(arg.getOsuApiObject()[0].u);
