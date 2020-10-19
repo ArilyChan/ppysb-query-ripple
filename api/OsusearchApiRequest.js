@@ -30,10 +30,7 @@ class OsusearchApi {
         else return result[0];
     }
 
-
-
-
-    static async search(_data) {
+    static async doSearch(_data) {
         let params = {};
         if (_data.title) params.title = _data.title;
         if (_data.artist) params.artist = _data.artist;
@@ -45,13 +42,21 @@ class OsusearchApi {
         try {
             if (!result || result.code === "error") return { code: "error" };
             if (result.result_count === 0) return { code: 404 };
-            if (result.beatmaps.length > 1) return this.findtheMostSuitable(result.beatmaps, params).beatmap_id;
-            return result.beatmaps[0].beatmap_id;
+            if (result.beatmaps.length > 1) return this.findtheMostSuitable(result.beatmaps, params);
+            return result.beatmaps[0];
         }
         catch (ex) {
             console.log(ex);
             return { code: "error" };
         }
+    }
+
+
+    static async search(_data, type = "id") {
+        let result = await this.doSearch(_data);
+        if (result.code) return result;
+        if (type === "set") return result.beatmapset_id;
+        else return result.beatmap_id;
     }
 
 
