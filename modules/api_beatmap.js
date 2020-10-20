@@ -11,6 +11,7 @@ module.exports = {
     argsInfo: '[beatmap] (:mode)',
     args: ['beatmapStringWithoutUser', 'modeString'],
     argNecessity: [2, -1],
+    group: 'common',
     addUserToArg: false,
     helpInfo: {
         defaultHelp: true,

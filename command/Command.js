@@ -105,15 +105,17 @@ class Command {
         const commands = this.globalConstant.commandsInfo.commands;
         let output = ""
         if (!this.argString) {
-            // 输出全部指令
-            output = output + "osu.ppy.sb 简略查询\n";
+            // 输出全部classic指令
+            output = output + "osu.ppy.sb classic指令查询\n";
             for (let com of commands) {
-                if (com.adminCommand) continue; // 不显示管理员指令
+                if (com.group === "admin") continue; // 不显示管理员指令
+                if (com.group === "relax") continue; // 不显示relax指令
                 if (!com.helpInfo.defaultHelp) output = output + prefix + com.helpInfo.customHelp + "\n";
                 else output = output + prefix + com.command[0] + " " + com.info + "\n";
             }
             output = output + "\n";
             output = output + prefix + "help + 指令 可以查询该指令详细信息\n";
+            output = output + prefix + "helprx 可以查询relax指令\n";
             // output = output + "基本指令有：" + commands.reduce((acc, cur) => { return acc + cur.command[0] + "/" }, "");
             return output;
         }
@@ -132,6 +134,24 @@ class Command {
         return "没有 " + this.argString + " 这个指令呢";
     }
 
+    getHelpRelax() {
+        const prefix = this.globalConstant.commandsInfo.prefixs[0];
+        const commands = this.globalConstant.commandsInfo.commands;
+        let output = ""
+        // 输出全部relax指令
+        output = output + "osu.ppy.sb relax指令查询\n";
+        for (let com of commands) {
+            if (com.group === "admin") continue; // 不显示管理员指令
+            if (com.group === "classic") continue; // 不显示classic指令
+            if (!com.helpInfo.defaultHelp) output = output + prefix + com.helpInfo.customHelp + "\n";
+            else output = output + prefix + com.command[0] + " " + com.info + "\n";
+        }
+        output = output + "\n";
+        output = output + prefix + "help + 指令 可以查询该指令详细信息\n";
+        // output = output + "基本指令有：" + commands.reduce((acc, cur) => { return acc + cur.command[0] + "/" }, "");
+        return output;
+    }
+
     checkAdmin() {
         if (this.globalConstant.admin.indexOf(this.qqId) < 0) return false;
         else return true;
@@ -147,6 +167,9 @@ class Command {
             // 帮助
             if (this.commandString === "help") {
                 return this.getHelp();
+            }
+            if (this.commandString === "helprx") {
+                return this.getHelpRelax();
             }
             // 查找指令
             const commands = this.globalConstant.commandsInfo.commands;

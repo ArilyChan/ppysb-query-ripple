@@ -11,6 +11,7 @@ module.exports = {
     argsInfo: '[qqId]',
     args: ['userStringWithoutBeatmap'],
     argNecessity: [2],
+    group: 'admin',
     addUserToArg: false,
     helpInfo: {
         defaultHelp: true,

@@ -26,15 +26,20 @@ class CommandsInfo {
     // 加载modules内的enabled指令
     loadModules() {
         let commands = [];
+        let allcommand = [];
         glob.sync(path.join(__dirname, '../modules/*.js')).map((file) => {
             try {
                 let module = require(path.resolve(file));
                 if (module !== undefined && module.enabled) {
                     commands.push(module);
+                    allcommand.push(...module.command);
                     console.log("[ppysb]加载指令：" + module.type);
                 }
+                if (new Set(allcommand).size !== allcommand.length) {
+                    console.log("[ppysb]警告：检测到重复指令，位于" + module.type);
+                }
             } catch (e) {
-                console.log('unable to load module due to require error', path.resolve(file));
+                console.log('[ppysb]unable to load module due to require error', path.resolve(file));
             }
         });
         return commands;

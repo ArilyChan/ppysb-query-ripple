@@ -11,6 +11,7 @@ module.exports = {
     argsInfo: '[mode]',
     args: ['onlyModeString'],
     argNecessity: [2],
+    group: 'common',
     addUserToArg: true,
     helpInfo: {
         defaultHelp: true,

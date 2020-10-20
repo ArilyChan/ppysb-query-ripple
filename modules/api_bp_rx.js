@@ -11,6 +11,7 @@ module.exports = {
     argsInfo: '(user) (#number) (:mode)',
     args: ['userStringWithoutBeatmap', 'limitString', 'modeString'],
     argNecessity: [1, -1, 0],
+    group: 'relax',
     addUserToArg: false,
     helpInfo: {
         defaultHelp: true,

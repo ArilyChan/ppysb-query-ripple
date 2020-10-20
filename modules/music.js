@@ -5,10 +5,11 @@ module.exports = {
     adminCommand: false,
     type: 'music',
     info: '试听谱面',
-    command: ['music'],
+    command: ['music', 'preview', 'm', 'pm'],
     argsInfo: '[beatmap]',
     args: ['beatmapStringWithoutUser'],
     argNecessity: [2],
+    group: 'common',
     addUserToArg: false,
     helpInfo: {
         defaultHelp: true,
